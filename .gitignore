@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+## random folders
+chaii-bert-baseline/
+data/
+oldcodes/
+outputs/
