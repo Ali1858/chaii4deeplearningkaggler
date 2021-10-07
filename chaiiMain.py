@@ -1,11 +1,7 @@
-
 from chaiiUtils import *
-from train import Train
+from train import Trainer
 
 import pandas as pd
-import numpy as np
-import collections
-
 from torch.utils.data import DataLoader
 
 
@@ -44,7 +40,7 @@ train_dataloader = DataLoader(tokenized_train_ds, shuffle=True, batch_size=BATCH
 eval_dataloader = DataLoader(tokenized_valid_ds, batch_size=BATCH_SIZE, collate_fn=data_collator)
 
 log.info('Training.....')
-train = Train(train_idx2eid,cls_token_id,device,model,len(train_dataloader))
+train = Trainer(train_idx2eid,cls_token_id,device,model,len(train_dataloader))
 train.fit(train_dataloader,[eval_dataloader,valid_df])
 
 log.info('Testing....')
@@ -53,6 +49,6 @@ test_eid2idx,test_idx2eid = get_id_mapper(test_df)
 tokenized_test_ds = tokenize_test_dataset(test_dataset,tokenizer,test_eid2idx)
 test_dataloader = DataLoader(tokenized_test_ds, batch_size=BATCH_SIZE, collate_fn=data_collator)
 
-pred_df = model_eval(model,test_dataloader,test_df,test_idx2eid,device,cls_token_id)
+pred_df = train.predict(test_dataloader,test_df,test_idx2eid)
 
 print(pred_df.head())

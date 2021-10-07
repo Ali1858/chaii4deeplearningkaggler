@@ -16,12 +16,12 @@ TRAIN_FN = 'train.csv'
 TEST_FN = 'test.csv'
 SUB_FN = 'sample_submission.csv'
 
-SPLIT_RATION = 0.999
+SPLIT_RATION = 0.85
 BATCH_SIZE = 8
 MAX_SEQ_LENGTH = 384
 DOC_STRIDE = 128
 LR = 5e-5
-NUM_EPOCHS = 1
+NUM_EPOCHS = 3
 
 
 LOG_FORMAT = '%(asctime)s %(levelname)s %(message)s'

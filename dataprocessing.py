@@ -1,10 +1,13 @@
 from chaiiConfig import *
 import collections
+
+## if start index or end index is invalid or not
+## if its index is out of document ignore it
 def is_invalid_index(start_index,end_index,offset_map,max_l):
     criteria_1 = (start_index >= len(offset_map)
                   or end_index >= len(offset_map)
-                  or offset_map[start_index] is None
-                  or offset_map[end_index] is None
+                  or offset_map[start_index] == -1111
+                  or offset_map[end_index] == -1111
                  )
     criteria_2 = end_index < start_index or end_index - start_index+1 > max_l
     if criteria_1 and criteria_2:
@@ -37,7 +40,6 @@ def data_postproc(df,features,outputs,idx2eid,cls_token_id,top=20,max_answer_len
             
             for start_index in start_indexes:
                 for end_index in end_indexes:
-                    
                     if is_invalid_index(start_index,end_index,offset_map,max_answer_length):
                         continue
                     start_char = offset_map[start_index][0]
@@ -123,11 +125,16 @@ def data_preproc(data,tokenizer,eid2idx,labels=True):
         sequence_ids = tokenized_data.sequence_ids(idx)
         
         if labels:
-            dataprep_withlabel(data,tokenized_data,offsets,sequence_ids,sample_index,cls_index,len(input_ids))
+            tokenized_data= dataprep_withlabel(data,tokenized_data,offsets,sequence_ids,sample_index,cls_index,len(input_ids))
         else:
             # Set to None the offset_mapping that are not part of the context so it's easy to determine if a token
             # position is part of the context or not.
-            tokenized_data["offset_mapping"][idx] = [(o if sequence_ids[k] == context_index else None)
-                                                     for k, o in enumerate(tokenized_data["offset_mapping"][idx])]
+            updated_offset_list = []
+            for k, o in enumerate(offsets):
+                if sequence_ids[k] == context_index:
+                    updated_offset_list.append(o)
+                else:
+                    updated_offset_list.append((-1111,-1111))
+            tokenized_data["offset_mapping"][idx] = updated_offset_list
     
     return tokenized_data
