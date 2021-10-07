@@ -38,9 +38,14 @@ def flat_batch(all_batches,batch):
     all_batches['offset_mapping'].extend(batch['offset_mapping'])
     all_batches['input_ids'].extend(batch['input_ids'])
     
+    
 def flat_outputs(all_outputs,outputs):
     all_outputs['slogits'].append(outputs.start_logits.cpu().detach().numpy())
     all_outputs['elogits'].append(outputs.end_logits.cpu().detach().numpy())
+
+def save_model(model,tokenzier):
+    model.save_pretrained(OUTPUT_DIR+'saved_weight/')
+    tokenzier.save_pretrained(OUTPUT_DIR+'saved_weight/')
 
 ## training
 class Trainer:
@@ -74,8 +79,10 @@ class Trainer:
                 epoch_loss += loss.item()
                 progress_bar.update(1)
             log.info(f'training loss for epoch {epoch} is {epoch_loss/len(traindata)}')
-            self.model_eval(evaldata[0],evaldata[1])
-            
+            evaldf = self.model_eval(evaldata[0],evaldata[1])
+        evaldf.to_csv(OUTPUT_DIR+f'pred_{epoch}.csv')
+        
+
     ## evaluation 
     def model_eval(self,eval_dataloader,evaldf,is_eval=True):
         self.model.eval()

@@ -5,23 +5,23 @@ import torch
 ## Basic Config 
 ## confirm this path before running code
 
-PRETRAIN_PATH = 'ai4bharat/indic-bert'
+PRETRAIN_PATH = 'deepset/xlm-roberta-large-squad2'
 # PRETRAIN_PATH = '/kaggle/input/indicbert/indic-bert-v1'
 
 
 DATA_DIR = '/home/ubuntu/repo/chaii4deeplearningkaggler/data/'
-OUTPUT_DIR = DATA_DIR+'outputs/'
+OUTPUT_DIR = '/home/ubuntu/repo/chaii4deeplearningkaggler/outputs/'
 
 TRAIN_FN = 'train.csv'
 TEST_FN = 'test.csv'
 SUB_FN = 'sample_submission.csv'
 
-SPLIT_RATION = 0.85
+SPLIT_RATION = 0.9
 BATCH_SIZE = 8
-MAX_SEQ_LENGTH = 384
+MAX_SEQ_LENGTH = 512
 DOC_STRIDE = 128
 LR = 5e-5
-NUM_EPOCHS = 3
+NUM_EPOCHS = 5
 
 
 LOG_FORMAT = '%(asctime)s %(levelname)s %(message)s'

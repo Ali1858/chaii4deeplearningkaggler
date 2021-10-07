@@ -1,5 +1,5 @@
 from chaiiUtils import *
-from train import Trainer
+from train import Trainer,save_model
 
 import pandas as pd
 from torch.utils.data import DataLoader
@@ -19,7 +19,7 @@ cls_token_id = tokenizer.cls_token_id
 
 log.info('Splitting train data')
 ## random shuffle and splitting data set
-## ratio is 85-15
+## ratio is 90-10
 train_df = train_df.sample(frac=1)
 split_idx = int(SPLIT_RATION*train_df.shape[0])
 valid_df = train_df.iloc[split_idx:].reset_index(drop=True)
@@ -42,6 +42,7 @@ eval_dataloader = DataLoader(tokenized_valid_ds, batch_size=BATCH_SIZE, collate_
 log.info('Training.....')
 train = Trainer(train_idx2eid,cls_token_id,device,model,len(train_dataloader))
 train.fit(train_dataloader,[eval_dataloader,valid_df])
+save_model(model,tokenizer)
 
 log.info('Testing....')
 ## getting id mapper for train data

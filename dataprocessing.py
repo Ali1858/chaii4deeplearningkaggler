@@ -6,11 +6,11 @@ import collections
 def is_invalid_index(start_index,end_index,offset_map,max_l):
     criteria_1 = (start_index >= len(offset_map)
                   or end_index >= len(offset_map)
-                  or offset_map[start_index] == -1111
-                  or offset_map[end_index] == -1111
+                  or offset_map[start_index][0] == -1111
+                  or offset_map[end_index][0] == -1111
                  )
     criteria_2 = end_index < start_index or end_index - start_index+1 > max_l
-    if criteria_1 and criteria_2:
+    if criteria_1 or criteria_2:
         return True
     return False
             
@@ -45,7 +45,7 @@ def data_postproc(df,features,outputs,idx2eid,cls_token_id,top=20,max_answer_len
                     start_char = offset_map[start_index][0]
                     end_char = offset_map[end_index][1]
                     valid_answers.append({"score": slogits[start_index] + elogits[end_index],
-                                         "text": context[start_index:end_index]})
+                                         "text": context[start_char:end_char]})
         
         if len(valid_answers) > 0:
             best_answer = sorted(valid_answers,key=lambda x:x["score"],reverse=True)[0]
@@ -126,15 +126,15 @@ def data_preproc(data,tokenizer,eid2idx,labels=True):
         
         if labels:
             tokenized_data= dataprep_withlabel(data,tokenized_data,offsets,sequence_ids,sample_index,cls_index,len(input_ids))
-        else:
-            # Set to None the offset_mapping that are not part of the context so it's easy to determine if a token
-            # position is part of the context or not.
-            updated_offset_list = []
-            for k, o in enumerate(offsets):
-                if sequence_ids[k] == context_index:
-                    updated_offset_list.append(o)
-                else:
-                    updated_offset_list.append((-1111,-1111))
-            tokenized_data["offset_mapping"][idx] = updated_offset_list
+
+        # Set to None the offset_mapping that are not part of the context so it's easy to determine if a token
+        # position is part of the context or not.
+        updated_offset_list = []
+        for k, o in enumerate(offsets):
+            if sequence_ids[k] == context_index:
+                updated_offset_list.append(o)
+            else:
+                updated_offset_list.append((-1111,-1111))
+        tokenized_data["offset_mapping"][idx] = updated_offset_list
     
     return tokenized_data
