@@ -135,4 +135,6 @@ chaii-bert-baseline/
 data/
 oldcodes/
 outputs/
-*.ipynb
+datasets/*
+!datasets/readme.txt
+.DS_Store
