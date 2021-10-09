@@ -135,3 +135,4 @@ chaii-bert-baseline/
 data/
 oldcodes/
 outputs/
+*.ipynb

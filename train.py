@@ -36,12 +36,12 @@ def get_optim(model,n):
 def flat_batch(all_batches,batch):
     all_batches['example_id'].extend(batch['example_id'].flatten().tolist())
     all_batches['offset_mapping'].extend(batch['offset_mapping'])
-    all_batches['input_ids'].extend(batch['input_ids'])
-    
+    all_batches['input_ids'].extend(batch['input_ids'].tolist())
+
     
 def flat_outputs(all_outputs,outputs):
-    all_outputs['slogits'].append(outputs.start_logits.cpu().detach().numpy())
-    all_outputs['elogits'].append(outputs.end_logits.cpu().detach().numpy())
+    all_outputs['slogits'].extend(outputs.start_logits.cpu().detach().numpy())
+    all_outputs['elogits'].extend(outputs.end_logits.cpu().detach().numpy())
 
 def save_model(model,tokenzier):
     model.save_pretrained(OUTPUT_DIR+'saved_weight/')

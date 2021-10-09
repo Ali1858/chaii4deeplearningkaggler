@@ -1,5 +1,6 @@
 from chaiiConfig import *
 import collections
+import numpy as np
 
 ## if start index or end index is invalid or not
 ## if its index is out of document ignore it
@@ -24,7 +25,7 @@ def data_postproc(df,features,outputs,idx2eid,cls_token_id,top=20,max_answer_len
     
     predictions = []
     for idx,row in df.iterrows():
-        feature_indices = features_per_context[idx]
+        feature_indices = features_per_context[row['id']]
         best_answer = {"text":"","score":0.0}
         valid_answers = []
         context = row['context']
@@ -35,8 +36,8 @@ def data_postproc(df,features,outputs,idx2eid,cls_token_id,top=20,max_answer_len
             cls_index = features["input_ids"][fidx].index(cls_token_id)
             
             # Go through all possibilities for the `n_best_size` greater start and end logits.
-            start_indexes = np.argsort(slogits)[-1 : -top - 1 : -1].tolist()
-            end_indexes = np.argsort(elogits)[-1 : -top - 1 : -1].tolist()
+            start_indexes = np.argsort(slogits)[ -top - 1 :].tolist()
+            end_indexes = np.argsort(elogits)[-top - 1 : ].tolist()
             
             for start_index in start_indexes:
                 for end_index in end_indexes:

@@ -5,7 +5,7 @@ import torch
 ## Basic Config 
 ## confirm this path before running code
 
-PRETRAIN_PATH = 'deepset/xlm-roberta-large-squad2'
+PRETRAIN_PATH = 'deepset/xlm-roberta-large-squad2' #'ai4bharat/indic-bert'#
 # PRETRAIN_PATH = '/kaggle/input/indicbert/indic-bert-v1'
 
 
@@ -17,11 +17,11 @@ TEST_FN = 'test.csv'
 SUB_FN = 'sample_submission.csv'
 
 SPLIT_RATION = 0.9
-BATCH_SIZE = 8
-MAX_SEQ_LENGTH = 512
+BATCH_SIZE = 4
+MAX_SEQ_LENGTH = 384
 DOC_STRIDE = 128
 LR = 5e-5
-NUM_EPOCHS = 5
+NUM_EPOCHS = 10
 
 
 LOG_FORMAT = '%(asctime)s %(levelname)s %(message)s'
