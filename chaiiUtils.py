@@ -3,6 +3,7 @@ from chaiiConfig import *
 from datasets import Dataset
 from transformers import AutoTokenizer,AutoModelForQuestionAnswering,DataCollatorWithPadding
 import collections
+import re
 
 from dataprocessing import data_preproc
 
@@ -56,4 +57,43 @@ def get_context_bin(context):
         return 2
     else:
         return 3
+
+def get_closest_startidx(context, answer_txt, answer_start):
     
+    start_idx = answer_start
+    for match in re.finditer(answer_txt, context):
+        if match.start() < answer_start:
+            start_idx = match.start()
+        else:
+            break
+            
+    return start_idx
+
+def transform_startidx(data):
+    
+    context = ' '.join(data['context'].split())
+    answer_txt = ' '.join(data['answer_text'].split())
+    answer_start = data['answer_start']
+    
+    start_idx = get_closest_startidx(context, answer_txt, answer_start)
+    
+    return [context, answer_txt, start_idx]
+
+def get_updated_startidx(train_df):
+
+    updated_data = train_df.apply(lambda x:transform_startidx(x), axis=1)
+
+    context_list = []
+    answer_text_list = []
+    answer_start_list = []
+
+    for val in updated_data:
+        context_list.append(val[0])
+        answer_text_list.append(val[1])
+        answer_start_list.append(val[2])
+
+    train_df['context'] = context_list
+    train_df['answer_text'] = answer_text_list
+    train_df['answer_start'] = answer_start_list
+
+    return train_df
