@@ -46,17 +46,14 @@ def tokenize_test_dataset(test,tokenizer,eid2idx):
     tokenized_test_ds = test.map(lambda data:data_preproc(data,tokenizer,eid2idx,False),batched=True,remove_columns=test.column_names)
     tokenized_test_ds.set_format("torch")
     return tokenized_test_ds
+
+def get_context_bin(context):
     
-
-
-
-        
-
-        
-  
-        
-        
-        
-        
-    
+    context_len = len(context.split())
+    if context_len <= 1000:
+        return 1
+    elif context_len <= 4000:
+        return 2
+    else:
+        return 3
     
