@@ -3,7 +3,7 @@ from train import Trainer,save_model
 
 import pandas as pd
 from torch.utils.data import DataLoader
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import train_test_split
 
 
 log.info('*****loading dataset*****')
@@ -12,6 +12,7 @@ test_df = pd.read_csv(DATA_DIR+TEST_FN)
 
 ## getting id mapper for train data
 train_eid2idx,train_idx2eid = get_id_mapper(train_df)
+train_df = get_updated_startidx(train_df)
 train_df['answer_end'] = train_df.apply(add_end_index,axis=1)
 
 log.info(f'loading pretain model and tokenizer from path{PRETRAIN_PATH}')
@@ -23,11 +24,7 @@ log.info('Splitting train data')
 ## ratio is 90-10
 train_df = train_df.sample(frac=1)
 context_bin_list = train_df.apply(lambda x:get_context_bin(x['context']), axis=1)
-skf = StratifiedKFold(n_splits=10)
-for train_index, test_index in skf.split(train_df, context_bin_list):
-    train_df = train_df.iloc[train_index].reset_index(drop=True)
-    valid_df = train_df.iloc[test_index].reset_index(drop=True)
-    break
+train_df,valid_df = train_test_split(train_df,train_size=SPLIT_RATION,shuffle=True,stratify=context_bin_list)
 
 log.info(f'Creating Hugging face Train and Valid Dataset using pandas df')
 ## creating Dataset from pandas. This is hugging face dataset not pytorch
